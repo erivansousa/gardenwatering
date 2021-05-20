@@ -1,0 +1,18 @@
+from tinydb import TinyDB, Query
+from src.GPIOController import GPIOController
+import time
+
+gpioController = GPIOController()
+
+def main():
+	print("Hello Garden")
+	
+	while (True):
+		gpioController.openValve()
+		time.sleep(1)
+		gpioController.closeValve()
+		must be called with GPIOController instance as first argument
+
+
+if __name__ == "__main__":
+	main()

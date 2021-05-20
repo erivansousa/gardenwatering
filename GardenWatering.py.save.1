@@ -1,0 +1,30 @@
+from tinydb import TinyDB, Query
+from pysondb import db
+from tinydb.storages import JSONStorage
+from tinydb.middlewares import CachingMiddleware
+
+from src.GPIOController import GPIOController
+import time
+
+gpioController = GPIOController()
+
+def main():
+	print("Hello Garden")
+	
+	#db = TinyDB('db/gardem_cfg.json')
+	#db.insert({'id': '345abf', 'value': 'value de teste'})
+	#print(db.all())
+	
+	#while (True):
+	#	gpioController.openValve()
+	#	time.sleep(2)
+	#	gpioController.closeValve()
+	#	time.sleep(2)
+
+	#data = db.getDb('db/garden_cfg.json')
+	#data.add({'name': 'erivan', 'type': 'client'})
+	#print(data.getAll())
+
+
+if __name__ == "__main__":
+	main()
