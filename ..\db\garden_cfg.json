@@ -1,1 +1,23 @@
-{"data": [{"type": "breakFlag", "value": true, "id": 144865589323524459}]}
+{
+    "data": [
+        {
+            "type": "breakFlag",
+            "value": true,
+            "id": 144865589323524459
+        },
+        {
+            "id": 144865589323524459,
+            "type": "config",
+            "value": {
+                "scheduleType": "INTERVAL",
+                "settings": {
+                    "time": "",
+                    "period": "HOUR",
+                    "each": 10
+                },
+                "duration": 25
+            },
+            "md5Hash": "cd9970aa2ac74e803830af180cc1f1fe"
+        }
+    ]
+}
