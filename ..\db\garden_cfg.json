@@ -6,16 +6,16 @@
             "id": 144865589323524459
         },
         {
-            "id": 144865589323524459,
+            "id": 144865589323524460,
             "type": "config",
             "value": {
                 "scheduleType": "INTERVAL",
                 "settings": {
                     "time": "",
-                    "period": "HOUR",
-                    "each": 10
+                    "period": "MINUTE",
+                    "each": 1
                 },
-                "duration": 25
+                "duration": 15
             },
             "md5Hash": "cd9970aa2ac74e803830af180cc1f1fe"
         }

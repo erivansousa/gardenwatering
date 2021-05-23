@@ -1,32 +1,47 @@
 from src.GPIOController import GPIOController
 from src.DB import Database
+from src.Models import Valve
 import threading
 import schedule
 import time
-
-class Valve:
-	def __init__(self):
-		self.is_valve_on = False
-		self.time_to_turnof = 2
-	
-	def valveState(self): return self.is_valve_on
-	def turnValveOn(self): self.is_valve_on = True
-	def turnValveOff(self): self.is_valve_on = False
-	def getOpenedTime(self): self.time_to_turnof
-	def setOpenedTime(self, openedTime): self.time_to_turnof = openedTime
+import requests
 
 gpioController = GPIOController()
 database = Database()
 valve = Valve()
-
+md5Hash = ""
 
 def configServerCheck():
+	response = requests.get('https://weddingticketmanager.herokuapp.com/tmpGardemConfig', params={'hash': md5Hash})
 	print("check server...")
+
+schedule.every(10).seconds.do(configServerCheck).tag('configChecker')
 
 def configSchedule(conf):	
 	schedule.clear('valve-control')
-	schedule.every(10).seconds.do(valve.turnValveOn).tag('valve-control')
-	#reconfigure shcedule based on the conf
+	settings = conf["settings"]
+
+	#set irrigation duration
+	valve.time_to_turnof = int(conf["duration"])
+
+	if(conf['scheduleType'] == "INTERVAL"):		
+		each = int(settings["each"])		
+		if(settings["period"] == "HOUR"):
+			#interval hour task
+			schedule.every(each).hours.do(valve.turnValveOn).tag('valve-control')
+		elif(settings["period"] == "MINUTE"):
+			#interval minute task
+			schedule.every(each).minutes.do(valve.turnValveOn).tag('valve-control')
+		else:
+			#interval undefined task (fallback 24 hour interval)
+			schedule.every(24).hours.do(valve.turnValveOn).tag('valve-control')
+	elif(conf['scheduleType'] == "DAILY"):
+		#daily task
+		hour = settings["time"]
+		schedule.every().day.at(hour).do(valve.turnValveOn).tag('valve-control')
+	else:
+		#undefined period (fallback 24 hour interval)
+		schedule.every(24).hours.do(valve.turnValveOn).tag('valve-control')
 
 def valveControlThread():
 	print("valve controll started")
@@ -39,12 +54,7 @@ def valveControlThread():
 			print("Valve closed")
 			valve.turnValveOff()
 
-schedule.every(10).seconds.do(configServerCheck).tag('configChecker')
-schedule.every(10).seconds.do(valve.turnValveOn).tag('valve-control')
-
 def main():
-	print("Hello Garden")
-
 	#prepare and start valve controll schedule
 	threading.Thread(target=valveControlThread, args=()).start()
 		
@@ -52,13 +62,16 @@ def main():
 	data = database.getConfigDB()
 	conf = data.getBy({"type": "config"})[0]
 
+	md5Hash = conf["md5Hash"]
+
 	#config valve controll schedule
-	configSchedule(conf)
+	configSchedule(conf['value'])
 	
 	while True:
 		schedule.run_pending()
 		time.sleep(1)
 
+#=============================================================================
 	#obter config do banco de dados
 	#caso seja uma mudança nova, inicializa o scheduler
 	#chama o servidor, caso o servidor atualize a config atualiza o registro no banco de dados e chama o fluxo para atualizar o schedule 
