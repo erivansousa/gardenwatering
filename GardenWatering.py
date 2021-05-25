@@ -26,6 +26,7 @@ def configServerCheck():
 		db = database.getConfigDB()
 		db.update({"type": "config"}, {"md5Hash": newHash, "value": body})
 
+
 		changeMd5Hash(newHash)
 
 		#config valve controll schedule
