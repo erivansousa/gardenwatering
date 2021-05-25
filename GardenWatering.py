@@ -11,9 +11,25 @@ database = Database()
 valve = Valve()
 md5Hash = ""
 
+def changeMd5Hash(value):
+	global md5Hash
+	md5Hash = value
+
 def configServerCheck():
-	response = requests.get('https://weddingticketmanager.herokuapp.com/tmpGardemConfig', params={'hash': md5Hash})
+	response = requests.get('https://weddingticketmanager.herokuapp.com/tmpGardenConfig', params={'hash': md5Hash})
 	print("check server...")
+	if(response.status_code == 200):
+		print("found config change, updating local changes..")
+		body = response.json()
+		newHash = response.headers['md5Hash']
+
+		db = database.getConfigDB()
+		db.update({"type": "config"}, {"md5Hash": newHash, "value": body})
+
+		changeMd5Hash(newHash)
+
+		#config valve controll schedule
+		configSchedule(body)
 
 schedule.every(10).seconds.do(configServerCheck).tag('configChecker')
 
@@ -62,7 +78,7 @@ def main():
 	data = database.getConfigDB()
 	conf = data.getBy({"type": "config"})[0]
 
-	md5Hash = conf["md5Hash"]
+	changeMd5Hash(conf["md5Hash"])
 
 	#config valve controll schedule
 	configSchedule(conf['value'])
