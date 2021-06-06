@@ -16,8 +16,9 @@ def changeMd5Hash(value):
 	md5Hash = value
 
 def configServerCheck():
-	response = requests.get('https://weddingticketmanager.herokuapp.com/tmpGardenConfig', params={'hash': md5Hash})
 	print("check server...")
+	response = requests.get('https://weddingticketmanager.herokuapp.com/tmpGardenConfig', params={'hash': md5Hash})
+
 	if(response.status_code == 200):
 		print("found config change, updating local changes..")
 		body = response.json()
@@ -25,7 +26,6 @@ def configServerCheck():
 
 		db = database.getConfigDB()
 		db.update({"type": "config"}, {"md5Hash": newHash, "value": body})
-
 
 		changeMd5Hash(newHash)
 
@@ -93,22 +93,6 @@ def main():
 	#caso seja uma mudança nova, inicializa o scheduler
 	#chama o servidor, caso o servidor atualize a config atualiza o registro no banco de dados e chama o fluxo para atualizar o schedule 
 	#o scheduler aciona a valvula e aguarda o tempo de desligamento
-	
-	#while (True):
-	#	gpioController.openValve()
-	#	time.sleep(2)
-	#	gpioController.closeValve()
-	#	time.sleep(2)
-
-	#data.add({'type': 'breakFlag', 'value': 'False'})
-	#print(data.getAll())	
-
-		#lastConfigCheck = checkConfigServer(lastConfigCheck)
-		#breakConfig = data.getBy({'type': 'breakFlag'})[0]
-		#breakFlag = bool(breakConfig['value'])		
-		
-		#if breakFlag:
-		#	break
 
 if __name__ == "__main__":
 	main()
