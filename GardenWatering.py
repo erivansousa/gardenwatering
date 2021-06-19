@@ -32,7 +32,7 @@ def configServerCheck():
 		#config valve controll schedule
 		configSchedule(body)
 
-schedule.every(10).seconds.do(configServerCheck).tag('configChecker')
+schedule.every(1).minutes.do(configServerCheck).tag('configChecker')
 
 def configSchedule(conf):	
 	schedule.clear('valve-control')
@@ -56,6 +56,8 @@ def configSchedule(conf):
 		#daily task
 		hour = settings["time"]
 		schedule.every().day.at(hour).do(valve.turnValveOn).tag('valve-control')
+	elif(conf['scheduleType'] == "OFF"):
+		return
 	else:
 		#undefined period (fallback 24 hour interval)
 		schedule.every(24).hours.do(valve.turnValveOn).tag('valve-control')
@@ -72,6 +74,7 @@ def valveControlThread():
 			valve.turnValveOff()
 
 def main():
+
 	#prepare and start valve controll schedule
 	threading.Thread(target=valveControlThread, args=()).start()
 		
@@ -81,18 +84,13 @@ def main():
 
 	changeMd5Hash(conf["md5Hash"])
 
+
 	#config valve controll schedule
 	configSchedule(conf['value'])
 	
 	while True:
 		schedule.run_pending()
 		time.sleep(1)
-
-#=============================================================================
-	#obter config do banco de dados
-	#caso seja uma mudança nova, inicializa o scheduler
-	#chama o servidor, caso o servidor atualize a config atualiza o registro no banco de dados e chama o fluxo para atualizar o schedule 
-	#o scheduler aciona a valvula e aguarda o tempo de desligamento
 
 if __name__ == "__main__":
 	main()

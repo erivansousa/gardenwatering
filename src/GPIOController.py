@@ -15,15 +15,15 @@ class GPIOController:
 		gpio.setup(VALVE_PIN, gpio.OUT)
 
 	def openValve(self):
-		gpio.output(VALVE_PIN, gpio.HIGH)
+		gpio.output(VALVE_PIN, gpio.LOW)
 
 	def closeValve(self):
-		gpio.output(VALVE_PIN, gpio.LOW)
+		gpio.output(VALVE_PIN, gpio.HIGH)
 
 	def getTime(self):
 		bus = SMBus(rpiChannel)
-		bus.read_i2c_data(CLK_I2C_ADDRESS, 0)
-		return 12342345245
+		data = bus.read_byte(CLK_I2C_ADDRESS, 0)
+		return data
 
 
 
