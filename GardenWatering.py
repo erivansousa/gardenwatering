@@ -32,7 +32,7 @@ def configServerCheck():
 		#config valve controll schedule
 		configSchedule(body)
 
-schedule.every(1).minutes.do(configServerCheck).tag('configChecker')
+schedule.every(10).minutes.do(configServerCheck).tag('configChecker')
 
 def configSchedule(conf):	
 	schedule.clear('valve-control')
