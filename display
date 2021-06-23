@@ -1,0 +1,19 @@
+[1mNAME[0m
+    pysondb
+
+[1mSYNOPSIS[0m
+    pysondb [4mCOMMAND[0m
+
+[1mCOMMANDS[0m
+    [1m[4mCOMMAND[0m[0m is one of the following:
+
+     create
+       Checks for the existence of the provided JSON DB. If it does not, this will add {data:[]}.
+
+     display
+
+     delete
+
+     convert
+
+     converttocsv

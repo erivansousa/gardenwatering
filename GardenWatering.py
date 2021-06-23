@@ -77,13 +77,15 @@ def main():
 
 	#prepare and start valve controll schedule
 	threading.Thread(target=valveControlThread, args=()).start()
-		
+	
+	#make sure the valve starts closed
+	gpioController.closeValve()
+
 	#get valve behavior from database
 	data = database.getConfigDB()
 	conf = data.getBy({"type": "config"})[0]
 
 	changeMd5Hash(conf["md5Hash"])
-
 
 	#config valve controll schedule
 	configSchedule(conf['value'])
